@@ -3,12 +3,14 @@ import { useTracker } from "meteor/react-meteor-data";
 import { UsersCollection } from "../api/users";
 
 export const UserList = () => {
-  const users = useTracker(() => {
-    return UsersCollection.find({}).fetch();
+  const [users, usersLoading] = useTracker(() => {
+    const sub = Meteor.subscribe("users", {});
+    const users = UsersCollection.find().fetch();
+    return [users, !sub.ready()];
   }, []);
   return (
     <div>
-      {!users?.length ? ( //cuserLoading
+      {usersLoading ? (
         <div>loading...</div>
       ) : (
         users.map((u) => (

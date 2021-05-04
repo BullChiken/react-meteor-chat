@@ -4,12 +4,12 @@ import { Chat as ChatMessages } from "../api/chat";
 import { UsersCollection } from "../api/users";
 
 export const Chat = () => {
+  useTracker(() => {
+    const sub = Meteor.subscribe("users", {});
+  }, []);
   const [chats, chatLoading] = useTracker(() => {
-    const dateToLoad = new Date();
-    dateToLoad.setHours(dateToLoad.getHours() - 1);
-    const sub = Meteor.subscribe("chat", {}); //sub not found????
-    console.log(sub);
-    const chat = ChatMessages.find({ createdAt: { $gt: dateToLoad } }).fetch();
+    const sub = Meteor.subscribe("chats", {});
+    const chat = ChatMessages.find().fetch();
     return [chat, !sub.ready()];
   }, []);
   const nameInput = useRef();
@@ -39,7 +39,7 @@ export const Chat = () => {
     <div>
       <input type="text" ref={nameInput} placeholder="please enter your name" />
       <button onClick={register}>Register</button>
-      {!chats?.length ? ( //chatLoading
+      {chatLoading ? (
         <div>loading...</div>
       ) : (
         chats.map((msg) => (

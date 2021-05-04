@@ -26,6 +26,16 @@ Meteor.methods({
   },
 });
 
+Meteor.publish("chats", () => {
+  const date = new Date();
+  date.setHours(date.getHours() - 1);
+  return ChatMessages.find({ createdAt: { $gt: date } });
+});
+
+Meteor.publish("users", () => {
+  return UsersCollection.find({}, { fields: { name: 1 } });
+});
+
 Meteor.startup(() => {
   // If the Links collection is empty, add some data.
   if (LinksCollection.find().count() === 0) {
